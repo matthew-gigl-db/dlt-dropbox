@@ -1,0 +1,12 @@
+# The main pipeline for dlt_dropbox
+resources:
+  pipelines:
+    dlt_dropbox_pipeline:
+      name: dlt_dropbox_pipeline
+      target: dlt_dropbox_${bundle.environment}
+      libraries:
+        - notebook:
+            path: ../src/dlt_pipeline.ipynb
+
+      configuration:
+        bundle.sourcePath: /Workspace/${workspace.file_path}/src
