@@ -1,34 +1,34 @@
 # The main pipeline for dlt_dropbox
+# resources:
+#   pipelines:
+#     pipeline_synthea_meta_ingestion_dropbox:
+#       name: synthea-meta-ingestion-dropbox
+#       configuration:
+#         workflow_inputs.env_mode: prd
+#         workflow_inputs.catalog_name: mgiglia
+#         workflow_inputs.schema_name: synthea
+#         workflow_inputs.volume_name: synthetic_files_raw
+#         bundle.sourcePath: /Workspace/${workspace.file_path}/src
+#       libraries:
+#         - notebook:
+#             path: ../src/0.0-dlt-bronze-dropbox.ipynb
+#       target: synthea_${bundle.environment}
+#       development: true
+#       photon: true
+#       channel: PREVIEW
+#       catalog: mgiglia
+#       serverless: true
+#       data_sampling: false
+
+# example:
 resources:
   pipelines:
-    pipeline_synthea_meta_ingestion_dropbox:
-      name: synthea-meta-ingestion-dropbox
-      configuration:
-        workflow_inputs.env_mode: prd
-        workflow_inputs.catalog_name: mgiglia
-        workflow_inputs.schema_name: synthea
-        workflow_inputs.volume_name: synthetic_files_raw
-        bundle.sourcePath: /Workspace/${workspace.file_path}/src
+    dlt_dropbox_pipeline:
+      name: dlt_dropbox_pipeline
+      target: dlt_dropbox_${bundle.environment}
       libraries:
         - notebook:
             path: ../src/0.0-dlt-bronze-dropbox.ipynb
-      target: synthea_${bundle.environment}
-      development: true
-      photon: true
-      channel: PREVIEW
-      catalog: mgiglia
-      serverless: true
-      data_sampling: false
 
-# example:
-# resources:
-#   pipelines:
-#     dlt_dropbox_pipeline:
-#       name: dlt_dropbox_pipeline
-#       target: dlt_dropbox_${bundle.environment}
-#       libraries:
-#         - notebook:
-#             path: ../src/dlt_pipeline.ipynb
-
-#       configuration:
-#         bundle.sourcePath: /Workspace/${workspace.file_path}/src
+      configuration:
+        bundle.sourcePath: /Workspace/${workspace.file_path}/src
