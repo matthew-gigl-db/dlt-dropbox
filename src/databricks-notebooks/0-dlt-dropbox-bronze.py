@@ -26,7 +26,10 @@ import dlt
 
 # COMMAND ----------
 
-from classDefinitions import *
+import sys
+sys.path.append('../classes')
+
+from main import *
 
 # COMMAND ----------
 
