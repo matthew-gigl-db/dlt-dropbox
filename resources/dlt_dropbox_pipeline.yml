@@ -11,7 +11,7 @@ resources:
         bundle.sourcePath: /Workspace/${workspace.file_path}/src
       libraries:
         - notebook:
-            path: ../src/0.0 dlt-bronze-dropbox
+            path: ../src/0.0 dlt-bronze-dropbox.ipynb
       target: synthea_${bundle.environment}
       development: true
       photon: true
