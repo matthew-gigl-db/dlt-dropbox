@@ -18,7 +18,7 @@ resources:
       channel: PREVIEW
       catalog: mgiglia
       serverless: true
-      data_sampling: false
+      # data_sampling: false
 
 # example:
 # resources:
