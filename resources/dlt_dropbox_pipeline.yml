@@ -28,7 +28,8 @@ resources:
       target: dlt_dropbox_${bundle.environment}
       libraries:
         - notebook:
-            path: ../src/dlt-bronze-dropbox.ipynb
+            # path: ../src/dlt-bronze-dropbox.ipynb
+            path: ../src/ipynb-dlt-bronze-dropbox.ipynb
 
       configuration:
         bundle.sourcePath: /Workspace/${workspace.file_path}/src
