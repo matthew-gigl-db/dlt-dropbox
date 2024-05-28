@@ -1,7 +1,7 @@
 # The main pipeline for dlt_dropbox
 resources:
   pipelines:
-    pipeline_synthea_meta_ingestion_dropbox:
+    dlt_dropbox_pipeline:
       name: synthea-meta-ingestion-dropbox
       configuration:
         workflow_inputs.env_mode: prd
