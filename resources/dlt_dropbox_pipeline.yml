@@ -11,7 +11,7 @@ resources:
         bundle.sourcePath: /Workspace/${workspace.file_path}/src
       libraries:
         - notebook:
-            path: ../src/ipython-notebooks/0-dlt-dropbox-bronze.ipynb
+            path: ../src/databricks-notebooks/0-dlt-dropbox-bronze.py
       target: synthea_${bundle.environment}
       clusters:
         - label: default
