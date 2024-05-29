@@ -8,7 +8,7 @@ resources:
         workflow_inputs.catalog_name: mgiglia
         workflow_inputs.schema_name: synthea
         workflow_inputs.volume_name: synthetic_files_raw
-        bundle.sourcePath: /Workspace/${workspace.file_path}/src
+        bundle.sourcePath: /Workspace${workspace.file_path}/src
       libraries:
         - notebook:
             path: ../src/databricks-notebooks/0-dlt-dropbox-bronze.py
