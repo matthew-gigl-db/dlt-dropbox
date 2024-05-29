@@ -13,11 +13,18 @@ resources:
         - notebook:
             path: ../src/ipython-notebooks/0-dlt-dropbox-bronze.ipynb
       target: synthea_${bundle.environment}
+      clusters:
+        - label: default
+          node_type_id: r5d.2xlarge
+          autoscale:
+            min_workers: 1
+            max_workers: 10
+            mode: ENHANCED
       development: true
       photon: true
       channel: PREVIEW
       catalog: mgiglia
-      serverless: true
+      # serverless: true
       # data_sampling: false
 
 # example:
