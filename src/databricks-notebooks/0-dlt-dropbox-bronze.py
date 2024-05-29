@@ -26,7 +26,10 @@ import dlt
 
 # COMMAND ----------
 
-from classDefinitions import *
+import sys, os
+sys.path.append(os.path.abspath(spark.conf.get('bundle.sourcePath')))
+
+import main
 
 # COMMAND ----------
 
@@ -83,7 +86,7 @@ print(f"""
 
 # COMMAND ----------
 
-Pipeline = IngestionDLT(
+Pipeline = main.IngestionDLT(
     spark = spark
     ,env_mode = env_mode
     ,catalog = catalog_name

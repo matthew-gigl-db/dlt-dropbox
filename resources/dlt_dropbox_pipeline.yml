@@ -1,7 +1,7 @@
 # The main pipeline for dlt_dropbox
 resources:
   pipelines:
-    pipeline_synthea_meta_ingestion_dropbox:
+    dlt_dropbox_pipeline:
       name: synthea-meta-ingestion-dropbox
       configuration:
         workflow_inputs.env_mode: prd
@@ -11,14 +11,21 @@ resources:
         bundle.sourcePath: /Workspace/${workspace.file_path}/src
       libraries:
         - notebook:
-            path: ../src/0.0 dlt-bronze-dropbox.ipynb
+            path: ../src/ipython-notebooks/0-dlt-dropbox-bronze.ipynb
       target: synthea_${bundle.environment}
+      clusters:
+        - label: default
+          node_type_id: r5d.2xlarge
+          autoscale:
+            min_workers: 1
+            max_workers: 10
+            mode: ENHANCED
       development: true
       photon: true
       channel: PREVIEW
       catalog: mgiglia
-      serverless: true
-      data_sampling: false
+      # serverless: true
+      # data_sampling: false
 
 # example:
 # resources:
@@ -29,6 +36,7 @@ resources:
 #       libraries:
 #         - notebook:
 #             path: ../src/dlt_pipeline.ipynb
+#             path: ../src/ipynb-dlt-bronze-dropbox.ipynb
 
 #       configuration:
 #         bundle.sourcePath: /Workspace/${workspace.file_path}/src
