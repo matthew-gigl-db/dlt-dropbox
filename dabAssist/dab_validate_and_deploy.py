@@ -81,6 +81,20 @@ temp_directory
 
 # COMMAND ----------
 
+bundle = dabAssist.assetBundle(
+  directory = temp_directory
+  ,repo_url = repo_url
+  ,project = project
+  ,cli_path = dc.cli_path
+  ,target = "dev"
+)
+
+# COMMAND ----------
+
+bundle
+
+# COMMAND ----------
+
 
 
 # COMMAND ----------

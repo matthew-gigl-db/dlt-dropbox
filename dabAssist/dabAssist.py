@@ -38,11 +38,10 @@ class databricksCli:
       cmd = f"{self.cli_path} current-user me"
       result = subprocess.run(cmd, shell=True, capture_output=True)
       return result
-
       
-  
-
-
+#######################  
+#######################
+#######################
 
 class assetBundle:
 
@@ -58,33 +57,39 @@ class assetBundle:
       self.repo_url = repo_url
       self.project = project
       self.target = target
+      self.bundle_path = f"{self.directory}/{self.project}"
       self.cli_path = cli_path
 
     def __repr__(self):
         return f"""assetBundle(directory='{self.directory}', repo_url='{self.repo_url}', project='{self.project}', target='{self.target}', cli_path='{self.cli_path}')"""
 
-    def clone_bundle(directory: str, repo_url: str, project: str):
-      cmd = f"cd {temp_directory}; pwd; git clone {repo_url}; cd {project}; ls -alt;"
+    def clone(self):
+      cmd = f"cd {self.directory}; pwd; git clone {self.repo_url}; cd {self.project}; ls -alt;"
       result = subprocess.run(cmd, shell=True, capture_output=True)
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")
 
-    def remove_cloned_bundle(directory: str, project: str):
-      cmd = f"rm -rf {directory}/project/.git; rm -rf {directory}"
+    def remove_clone(self):
+      cmd = f"rm -f {self.bundle_path}/.git; rm -rf {self.directory}"
       result = subprocess.run(cmd, shell=True, capture_output=True)
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")  
 
-    def validate_bundle(bundle_path: str, cli_path: str):
-      cmd = f"""cd {bundle_path}; pwd; git pull; {cli_path} bundle validate"""
+    def validate(self):
+      cmd = f"""cd {self.bundle_path}; pwd; git pull; {self.cli_path} bundle validate"""
       result = subprocess.run(cmd, shell=True, capture_output=True)
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")
 
-    def deploy_bundle(bundle_path: str, cli_path: str, target: str = "dev"):
-      cmd = f"cd {bundle_path}; pwd; {cli_path} bundle deploy -t {target}"
+    def deploy(self):
+      cmd = f"cd {self.bundle_path}; pwd; {self.cli_path} bundle deploy -t {self.target}"
       result = subprocess.run(cmd, shell=True, capture_output=True)
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")
 
-    def destroy_bundle(bundle_path: str, cli_path: str, target: str = "dev"):
-      cmd = f"cd {bundle_path}; pwd; {cli_path} bundle destroy -t {target}"    
+    def destroy(self):
+      cmd = f"cd {self.bundle_path}; pwd; {self.cli_path} bundle destroy -t {self.target}"    
+      result = subprocess.run(cmd, shell=True, capture_output=True)
+      return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")
+    
+    def run(self):
+      cmd = f"cd {self.bundle_path}; pwd; {self.cli_path} bundle run -t {self.target}"    
       result = subprocess.run(cmd, shell=True, capture_output=True)
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")
   
