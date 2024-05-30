@@ -8,10 +8,10 @@ resources:
         workflow_inputs.catalog_name: mgiglia
         workflow_inputs.schema_name: synthea
         workflow_inputs.volume_name: synthetic_files_raw
-        bundle.sourcePath: /Workspace/${workspace.file_path}/src
+        bundle.sourcePath: /Workspace${workspace.file_path}/src
       libraries:
         - notebook:
-            path: ../src/ipython-notebooks/0-dlt-dropbox-bronze.ipynb
+            path: ../src/databricks-notebooks/0-dlt-dropbox-bronze.py
       target: synthea_${bundle.environment}
       clusters:
         - label: default
@@ -27,16 +27,3 @@ resources:
       # serverless: true
       # data_sampling: false
 
-# example:
-# resources:
-#   pipelines:
-#     dlt_dropbox_pipeline:
-#       name: dlt_dropbox_pipeline
-#       target: dlt_dropbox_${bundle.environment}
-#       libraries:
-#         - notebook:
-#             path: ../src/dlt_pipeline.ipynb
-#             path: ../src/ipynb-dlt-bronze-dropbox.ipynb
-
-#       configuration:
-#         bundle.sourcePath: /Workspace/${workspace.file_path}/src
