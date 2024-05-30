@@ -60,10 +60,6 @@ dc.install()
 
 # COMMAND ----------
 
-dc.cli_path
-
-# COMMAND ----------
-
 dc.configure().returncode
 
 # COMMAND ----------
@@ -95,7 +91,35 @@ bundle
 
 # COMMAND ----------
 
+print(
+  bundle.clone()
+)
 
+# COMMAND ----------
+
+print(
+  bundle.checkout(
+    branch="main"
+  )
+)
+
+# COMMAND ----------
+
+print(
+  bundle.validate()
+)
+
+# COMMAND ----------
+
+print(
+  bundle.deploy()
+)
+
+# COMMAND ----------
+
+print(
+  bundle.run()
+)
 
 # COMMAND ----------
 

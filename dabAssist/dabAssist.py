@@ -61,7 +61,7 @@ class assetBundle:
       self.cli_path = cli_path
 
     def __repr__(self):
-        return f"""assetBundle(directory='{self.directory}', repo_url='{self.repo_url}', project='{self.project}', target='{self.target}', cli_path='{self.cli_path}')"""
+        return f"""assetBundle(directory='{self.directory}', repo_url='{self.repo_url}', project='{self.project}', target='{self.target}', bundle_path='{self.bundle_path}', cli_path='{self.cli_path}')"""
 
     def clone(self):
       cmd = f"cd {self.directory}; pwd; git clone {self.repo_url}; cd {self.project}; ls -alt;"
@@ -93,8 +93,8 @@ class assetBundle:
       result = subprocess.run(cmd, shell=True, capture_output=True)
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")
     
-    def run(self):
-      cmd = f"cd {self.bundle_path}; pwd; {self.cli_path} bundle run -t {self.target}"    
+    def run(self, key: str, pipeline_flag: str = "--validate-only"):
+      cmd = f"cd {self.bundle_path}; pwd; {self.cli_path} bundle run -t {self.target} {pipeline_flag} {key}"    
       result = subprocess.run(cmd, shell=True, capture_output=True)
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")
   
