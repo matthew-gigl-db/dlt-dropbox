@@ -132,6 +132,12 @@ print(
 
 # COMMAND ----------
 
+print(
+  bundle.remove_clone()
+)
+
+# COMMAND ----------
+
 command = f"cd {temp_directory}; pwd; git clone {repo_url}; cd {project}; ls -alt;"
 
 !{command}

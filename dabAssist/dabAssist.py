@@ -69,7 +69,7 @@ class assetBundle:
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")
 
     def remove_clone(self):
-      cmd = f"rm -f {self.bundle_path}/.git; rm -rf {self.directory}"
+      cmd = f"rm -rf {self.bundle_path}/.git; rm -rf {self.directory}"
       result = subprocess.run(cmd, shell=True, capture_output=True)
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")  
     
