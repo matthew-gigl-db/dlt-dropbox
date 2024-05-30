@@ -1,5 +1,5 @@
 # Databricks notebook source
-dbutils.library.restartPython()
+# dbutils.library.restartPython()
 
 # COMMAND ----------
 
@@ -140,33 +140,4 @@ print(
 
 print(
   bundle.remove_clone()
-)
-
-# COMMAND ----------
-
-check_cli_cmd = f"{cli_path} current-user me"
-!{check_cli_cmd}
-
-# COMMAND ----------
-
-def validate_bundle(bundle_path: str, cli_path: str):
-  cmd = f"""cd {bundle_path}; pwd; git pull; {cli_path} bundle validate"""
-  result = subprocess.run(cmd, shell=True, capture_output=True)
-  return result.stdout.decode("utf-8")
-
-# COMMAND ----------
-
-print(validate_bundle(
-  bundle_path=f"{temp_directory}/{project}"
-  ,cli_path=cli_path
-))
-
-# COMMAND ----------
-
-print(
-  deploy_bundle(
-    bundle_path=f"{temp_directory}/{project}"
-    ,cli_path=cli_path
-    ,target="dev"
-  )
 )
