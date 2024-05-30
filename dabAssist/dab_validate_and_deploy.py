@@ -118,7 +118,16 @@ print(
 # COMMAND ----------
 
 print(
-  bundle.run()
+  bundle.run(
+    key = "dlt_dropbox_pipeline"
+    ,pipeline_flag = "--validate-only"
+  )
+)
+
+# COMMAND ----------
+
+print(
+  bundle.destroy()
 )
 
 # COMMAND ----------

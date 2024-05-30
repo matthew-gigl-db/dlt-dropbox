@@ -89,7 +89,7 @@ class assetBundle:
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")
 
     def destroy(self):
-      cmd = f"cd {self.bundle_path}; pwd; {self.cli_path} bundle destroy -t {self.target}"    
+      cmd = f"cd {self.bundle_path}; pwd; {self.cli_path} bundle destroy -t {self.target} --auto-approve"    
       result = subprocess.run(cmd, shell=True, capture_output=True)
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")
     
