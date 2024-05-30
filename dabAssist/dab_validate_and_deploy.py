@@ -1,10 +1,10 @@
 # Databricks notebook source
-user_name = spark.sql("select current_user()").collect()[0][0]
-secret_scope = user_name.split(sep="@")[0].replace(".", "-")
-secret_scope
+dbutils.library.restartPython()
 
 # COMMAND ----------
 
+# DBTITLE 1,Input Widgets for Repo URL
+# Input Widgets for the Repo URL, Project Name, and Workspace URL
 dbutils.widgets.text(name = "repo_url", defaultValue="")
 dbutils.widgets.text(name = "project", defaultValue="")
 dbutils.widgets.text(name = "workspace_url", defaultValue="")
@@ -27,10 +27,48 @@ f"""
 
 # COMMAND ----------
 
+user_name = spark.sql("select current_user()").collect()[0][0]
+secret_scope = user_name.split(sep="@")[0].replace(".", "-")
+secret_scope
 
-import dabHelper
+# COMMAND ----------
+
+db_pat = dbutils.secrets.get(
+  scope = secret_scope
+  ,key = dbutils.widgets.get("pat_secret")
+)
+
+db_pat
+
+# COMMAND ----------
+
+import dabAssist
 import subprocess
 from tempfile import TemporaryDirectory
+
+# COMMAND ----------
+
+dc = dabAssist.databricksCli(
+  workspace_url = workspace_url
+  ,db_pat = db_pat
+)
+dc
+
+# COMMAND ----------
+
+dc.install()
+
+# COMMAND ----------
+
+dc.cli_path
+
+# COMMAND ----------
+
+dc.configure().returncode
+
+# COMMAND ----------
+
+print(dc.validate().stdout.decode('utf-8'))
 
 # COMMAND ----------
 
@@ -40,6 +78,10 @@ temp_directory = Dir.name
 # COMMAND ----------
 
 temp_directory
+
+# COMMAND ----------
+
+
 
 # COMMAND ----------
 
@@ -66,34 +108,6 @@ print(remove_cloned_bundle(
   directory=temp_directory
   ,project = project
 ))
-
-# COMMAND ----------
-
-install_cmd_resp = !{"""curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh"""}
-install_cmd_resp
-
-# COMMAND ----------
-
-if install_cmd_resp[0][0:4] == "Inst":
-  cli_path = install_cmd_resp[0].split("at ")[1].replace(".", "")
-else:
-  cli_path = install_cmd_resp[0].split(" ")[2]
-cli_path
-
-# COMMAND ----------
-
-version_cmd = f"{cli_path} -v"
-
-!{version_cmd}
-
-# COMMAND ----------
-
-db_pat = dbutils.secrets.get(
-  scope = secret_scope
-  ,key = dbutils.widgets.get("pat_secret")
-)
-
-db_pat
 
 # COMMAND ----------
 
