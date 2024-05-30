@@ -64,7 +64,13 @@ dc.configure().returncode
 
 # COMMAND ----------
 
-print(dc.validate().stdout.decode('utf-8'))
+import json
+print(
+  json.dumps(
+    json.loads(dc.validate().stdout.decode('utf-8'))
+    ,indent=4
+  )
+)
 
 # COMMAND ----------
 
@@ -135,38 +141,6 @@ print(
 print(
   bundle.remove_clone()
 )
-
-# COMMAND ----------
-
-command = f"cd {temp_directory}; pwd; git clone {repo_url}; cd {project}; ls -alt;"
-
-!{command}
-
-# COMMAND ----------
-
-  Dir = TemporaryDirectory()
-  temp_directory = Dir.name  
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-print(remove_cloned_bundle(
-  directory=temp_directory
-  ,project = project
-))
-
-# COMMAND ----------
-
-configure_command = f"""echo '{db_pat}' | {cli_path} configure --host 'https://{workspace_url}'"""
-
-!{configure_command}
 
 # COMMAND ----------
 
