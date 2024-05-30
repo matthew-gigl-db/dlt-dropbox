@@ -72,6 +72,11 @@ class assetBundle:
       cmd = f"rm -f {self.bundle_path}/.git; rm -rf {self.directory}"
       result = subprocess.run(cmd, shell=True, capture_output=True)
       return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")  
+    
+    def checkout(self, branch: str):
+      cmd = f"cd {self.bundle_path}; git checkout {branch}"
+      result = subprocess.run(cmd, shell=True, capture_output=True)
+      return result.stdout.decode("utf-8") + "\n" + result.stderr.decode("utf-8")
 
     def validate(self):
       cmd = f"""cd {self.bundle_path}; pwd; git pull; {self.cli_path} bundle validate"""
