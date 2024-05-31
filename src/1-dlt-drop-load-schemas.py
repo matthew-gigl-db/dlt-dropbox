@@ -10,7 +10,8 @@ def get_absolute_path(*relative_parts):
     else:
         return os.path.join(*relative_parts)
 
-ddl_path = get_absolute_path("../..", "fixtures/ddl", "allergies.ddl")
+ddl_path = get_absolute_path("..", "fixtures", "ddl")
+ddl_path
 
 # COMMAND ----------
 
