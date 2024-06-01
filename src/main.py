@@ -58,7 +58,7 @@ def get_absolute_path(*relative_parts):
     
 def retrieve_ddl_files(ddl_path: str, workspace_client: WorkspaceClient) -> pd.DataFrame:
   """Retrieve all ddl files from the given path and load into a pandas dataframe."""
-  ddl_files = [file.as_dict() for file in w.workspace.list(path = ddl_path)]
+  ddl_files = [file.as_dict() for file in workspace_client.workspace.list(path = ddl_path)]
   for ddl_file in ddl_files:
     path = ddl_file.get("path")
     ddl_file["table_name"] = path.split("/")[-1].replace(".ddl", "")

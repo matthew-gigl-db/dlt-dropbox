@@ -130,4 +130,4 @@ filenames_list = ("encounters.csv", "allergies.csv", "imaging_studies.csv", "pro
 
 for filename in filenames_list:
   name = filename.replace(".", "_")
-  Pipeline.split_bronze_table(bronze_table = "synthea_csv_bronze", filename = filename, table_name = name, live = True)
+  Pipeline.split_bronze_table(bronze_table = "synthea_csv_bronze", filename = filename, table_name = name)
