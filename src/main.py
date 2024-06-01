@@ -191,7 +191,7 @@ class IngestionDLT:
             ,"pipelines.reset.allowed" : "true"}
         )
         def synthea_schemas():
-            return self.spark.createDataFrame(ddl_files)
+            return self.spark.createDataFrame(ddl_df)
         
         
 
