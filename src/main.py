@@ -5,6 +5,7 @@ from pyspark.sql.session import SparkSession
 from pyspark.sql.streaming import DataStreamReader, DataStreamWriter
 from typing import Callable
 import os
+import pandas as pd
 
 ##########################
 ####### operations #######
@@ -53,6 +54,16 @@ def get_absolute_path(*relative_parts):
         return path if path.startswith("/Workspace") else "/Workspace" + path
     else:
         return os.path.join(*relative_parts)
+    
+def retrieve_ddl_files(ddl_path: str = ddl_path, workspace_client: WorkspaceClient =  w) -> pd.DataFrame:
+  """Retrieve all ddl files from the given path and load into a pandas dataframe."""
+  ddl_files = [file.as_dict() for file in w.workspace.list(path = ddl_path)]
+  for ddl_file in ddl_files:
+    path = ddl_file.get("path")
+    ddl_file["table_name"] = path.split("/")[-1].replace(".ddl", "")
+    with open(path, 'r') as file:
+      ddl_file["ddl"] = file.read()
+  return pd.DataFrame(ddl_files)
 
 ###########################
 ### classes and methods ###
@@ -63,25 +74,23 @@ class IngestionDLT:
     def __init__(
         self
         ,spark: SparkSession # = spark
-        ,env_mode: str = "dev"
-        ,catalog: str = "lakehouse"
-        ,schema: str = "landing"
-        ,volume: str = "dropbox"
+        # ,env_mode: str = "dev"
+        # ,catalog: str = "lakehouse"
+        # ,schema: str = "landing"
+        ,volume: str
     ):
         self.spark = spark
-        self.env_mode = env_mode
-        self.catalog = catalog
-        self.schema = schema
+        # self.env_mode = env_mode
         self.volume = volume
 
         # use_catalog_schema(catalog = self.catalog, schema = self.schema, env_mode = self.env_mode, verbose = False)
-        if self.env_mode == "prd":
-            self.catalog_set = self.catalog
-        else:
-            self.catalog_set = f"{self.catalog}_{self.env_mode}"
+        # if self.env_mode == "prd":
+        #     self.catalog_set = self.catalog
+        # else:
+        #     self.catalog_set = f"{self.catalog}_{self.env_mode}"
 
     def __repr__(self):
-        return f"""IngestionDLT(env_mode='{self.env_mode}', catalog='{self.catalog_set}', schema='{self.schema}', volume='{self.volume}')"""
+        return f"""IngestionDLT(volume='{self.volume}')"""
 
     def ingest_raw_to_bronze(self, table_name: str, table_comment: str, table_properties: dict, source_folder_path_from_volume: str = "", maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = True, options: dict = None):
         """
@@ -94,12 +103,14 @@ class IngestionDLT:
             ,table_properties = table_properties
 
         )
-        def bronze_ingestion(spark = self.spark, source_folder_path_from_volume = source_folder_path_from_volume, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, options = options, catalog = self.catalog_set, schema = self.schema, volume = self.volume):
+        def bronze_ingestion(spark = self.spark, source_folder_path_from_volume = source_folder_path_from_volume, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, options = options
+                            #  , catalog = self.catalog_set, schema = self.schema
+                             , volume = self.volume):
 
             if source_folder_path_from_volume == "":
-                file_path = f"/Volumes/{catalog}/{schema}/{volume}/"
+                file_path = f"{volume}/"
             else:
-                file_path = f"/Volumes/{catalog}/{schema}/{volume}/{source_folder_path_from_volume}/"
+                file_path = f"{volume}/{source_folder_path_from_volume}/"
 
             raw_df = read_stream_raw(spark = spark, path = file_path, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, options = options)
 
@@ -119,7 +130,8 @@ class IngestionDLT:
             )
 
             return bronze_df
-        
+    
+    ### Ingest from multiple subfolders of the same Volume into one bronze table.
     def ingest_raw_to_bronze_synchronous(self, table_names: list, table_comments: list, table_properties: dict, source_folder_path_from_volumes: str, maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = True, options: dict = None):
         """
             Synchronously ingest from multiple subfolders of the same Volume into more than one bronze table.  Each bronze table created is managed as a streaming Delta Live Table in the same <catalog.schema> as the source volume.  
@@ -127,10 +139,8 @@ class IngestionDLT:
         for i in range(0,len(table_names)):
             ingest_raw_to_bronze(self = self, table_name = table_names[i], table_comment = table_comments[i], source_folder_path_from_volume = source_folder_path_from_volumes[i], table_properties = table_properties, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, options = options)
 
+    ### List the file names loaded into bronze.  We'll use this to determine if new files have arrived.  
     def list_dropbox_files(self, bronze_table: str): 
-        """
-            This method assumes that files dropped in the same landing volume with similiar filenames are of the same schema and should be moved to their own bronze table for further processing.  Note that use of this method is optional for the pipeline and works best when the files have the same name but are organzied by folders to differentiate dates arrived (typically paritions).  Do not use if every file name is unique.    
-        """
         @dlt.table(
             name = "temp_landed_bronze_files"
             ,comment = "Temporary table containing the distinct filename types loaded from the dropbox."
@@ -139,8 +149,12 @@ class IngestionDLT:
         )
         def temp_bronze_files(spark = self.spark, bronze_table = bronze_table):
             return (spark.sql(f"""select distinct inputFileName from LIVE.{bronze_table}"""))
-        
-    def split_bronze_table(self, bronze_table: str, filename: str, table_name: str, live: bool = True):
+
+    ### Split Bronze Table Into Multiple Bronze Tables   
+    def split_bronze_table(self, bronze_table: str, filename: str, table_name: str):
+        """
+            This method assumes that files dropped in the same landing volume with similiar filenames are of the same schema and should be moved to their own bronze table for further processing.  Note that use of this method is optional for the pipeline and works best when the files have the same name but are organzied by folders to differentiate dates arrived (typically paritions).  Do not use if every file name is unique.    
+        """
         dlt.create_streaming_table(
             name = f"{table_name}_bronze"
             ,comment = f"Bronze table of every {filename} landed from associated {bronze_table}."
@@ -158,40 +172,26 @@ class IngestionDLT:
 
         @dlt.append_flow(
             target = f"{table_name}_bronze"
-            ,name = f"{table_name}_bronze_append_flow" # optional, defaults to function name
-            # ,spark_conf = {"<key>" : "<value", "<key" : "<value>"} # optional
-            # ,comment = "<comment>" # optional
+            ,name = f"{table_name}_bronze_append_flow"
+            # ,spark_conf = {"<key>" : "<value", "<key" : "<value>"}
+            # ,comment = "<comment>"
         ) 
         def split_bronze(spark = self.spark, bronze_table = bronze_table, filename = filename): 
-            # return dlt.streaming_read(bronze_table).where(col("inputFileName") == lit(filename))
-            # return (dlt.read(bronze_table).where(col("inputFileName") == lit(filename)))
             return spark.readStream.table(f"LIVE.{bronze_table}").where(col("inputFileName") == lit(filename))
-
-        # @dlt.table(
-        #     name = f"{table_name}_bronze"
-        #     ,comment = f"Bronze table of every {filename} landed from associated {bronze_table}."
-        #     ,temporary = False
-        #     ,table_properties = None # Note-- this should be inherited from the source bronze table.
-        # )
-        # def split_bronze(spark = self.spark, bronze_table = bronze_table, filename = filename): 
-        #     if live == True:  
-        #         return (dlt.read(bronze_table).where(col("inputFileName") == lit(filename)))
-        #     # (spark.sql(f"""select * from LIVE.{bronze_table} where inputFileName = '{filename}'"""))
-        #     else:
-        #         return (spark.sql(f"""select * from {self.catalog_set}.{self.schema}.{bronze_table} where inputFileName = '{filename}'"""))
         
-    def split_bronze_table_synchronous(self, bronze_table: str, live: bool = True):
-        
-        if live == True:  
-            filenames = self.spark.sql(f"select distinct * from LIVE.temp_landed_bronze_files").collect()
-        else:  
-            filenames = self.spark.sql(f"select distinct * from {self.catalog_set}.{self.schema}.temp_landed_bronze_files").collect()
-        
-        filenames_list = [row.inputFileName for row in filenames]
-            
-        for filename in filenames_list:
-            name = filename.replace(".", "_")
-            self.split_bronze_table(bronze_table = bronze_table, filename = filename, table_name = name, live = live)
+    ### Load DDL Files From Workspace 
+    def load_ddl_files(self, ddl_df: pd.DataFrame = ddl_df):
+        @dlt.table(
+            name = "synthea_silver_schemas"
+            ,comment = "Reference table containing the schema definitions for the Synthea csv file datasets."
+            ,temporary = False
+            ,table_properties = {
+            "pipelines.autoOptimize.managed" : "true"
+            ,"pipelines.autoOptimize.zOrderCols" : None
+            ,"pipelines.reset.allowed" : "true"}
+        )
+        def synthea_schemas():
+            return self.spark.createDataFrame(ddl_files)
         
         
 
