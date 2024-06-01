@@ -26,7 +26,7 @@ import main
 
 # COMMAND ----------
 
-ddl_path = get_absolute_path("..", "fixtures", "ddl")
+ddl_path = main.get_absolute_path("..", "fixtures", "ddl")
 ddl_path
 
 # COMMAND ----------
@@ -75,9 +75,15 @@ ddl_files = main.retrieve_ddl_files(
 # COMMAND ----------
 
 Pipeline = main.IngestionDLT(
-  
+    spark = spark
+    # ,env_mode = env_mode
+    # ,catalog = catalog_name
+    # ,schema = schema_name
+    ,volume = volume_name
 )
 
 # COMMAND ----------
 
-help(spark.readStream.table)
+Pipeline.load_ddl_files(
+  ddl_df = ddl_files
+)
