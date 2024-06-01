@@ -8,6 +8,7 @@
 dbutils.widgets.text(name = "repo_url", defaultValue="")
 dbutils.widgets.text(name = "project", defaultValue="")
 dbutils.widgets.text(name = "workspace_url", defaultValue="")
+dbutils.widgets.text(name = "branch", defaultValue="main")
 
 # Add a widget for the Databricks Secret representing the Databricks Personal Access Token  
 dbutils.widgets.text("pat_secret", "databricks_pat", "DB Secret for PAT")
@@ -17,11 +18,13 @@ dbutils.widgets.text("pat_secret", "databricks_pat", "DB Secret for PAT")
 repo_url = dbutils.widgets.get(name="repo_url")
 project = dbutils.widgets.get(name="project")
 workspace_url = dbutils.widgets.get(name="workspace_url")
+branch = dbutils.widgets.get(name="branch")
 print(
 f"""
   repo_url = {repo_url}
   project = {project}
   workspace_url = {workspace_url}
+  branch = {branch}
 """
 )
 
@@ -105,7 +108,7 @@ print(
 
 print(
   bundle.checkout(
-    branch="main"
+    branch = branch
   )
 )
 
