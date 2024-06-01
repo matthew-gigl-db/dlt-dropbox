@@ -26,7 +26,7 @@ import main
 
 # COMMAND ----------
 
-ddl_path = main.get_absolute_path("..", "fixtures", "ddl")
+ddl_path = os.path.normpath(os.path.join(spark.conf.get('bundle.sourcePath'), "..", "fixtures", "ddl"))
 ddl_path
 
 # COMMAND ----------

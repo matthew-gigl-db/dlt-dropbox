@@ -188,7 +188,6 @@ class IngestionDLT:
             ,temporary = False
             ,table_properties = {
             "pipelines.autoOptimize.managed" : "true"
-            ,"pipelines.autoOptimize.zOrderCols" : None
             ,"pipelines.reset.allowed" : "true"}
         )
         def synthea_schemas():
