@@ -1,5 +1,8 @@
 # Databricks notebook source
-import pandas as pd
+# dbutils.library.restartPython()
+
+# COMMAND ----------
+
 import os
 
 def get_absolute_path(*relative_parts):
@@ -10,15 +13,50 @@ def get_absolute_path(*relative_parts):
     else:
         return os.path.join(*relative_parts)
 
+# COMMAND ----------
+
 ddl_path = get_absolute_path("..", "fixtures", "ddl")
 ddl_path
 
 # COMMAND ----------
 
-ddl_content = {}
-with open(ddl_path, 'r') as file:
-    ddl_content['allergies_ddl'] = file.read()
+from databricks.sdk import WorkspaceClient
+
+w = WorkspaceClient()
 
 # COMMAND ----------
 
-print(ddl_content['allergies_ddl'])
+import pandas as pd
+
+def retrieve_ddl_files(ddl_path: str = ddl_path, workspace_client: WorkspaceClient =  w) -> pd.DataFrame:
+  """Retrieve all ddl files from the given path and load into a pandas dataframe."""
+  ddl_files = [file.as_dict() for file in w.workspace.list(path = ddl_path)]
+  for ddl_file in ddl_files:
+    path = ddl_file.get("path")
+    ddl_file["table_name"] = path.split("/")[-1].replace(".ddl", "")
+    with open(path, 'r') as file:
+      ddl_file["ddl"] = file.read()
+  return pd.DataFrame(ddl_files)
+
+
+# COMMAND ----------
+
+ddl_files = retrieve_ddl_files(
+  ddl_path = ddl_path
+  ,workspace_client=w
+)
+
+# COMMAND ----------
+
+def load_ddl_files(ddl_df: pd.DataFrame = ddl_df):
+  @dlt.table(
+    name = "synthea_silver_schemas"
+    ,comment = "Reference table containing the schema definitions for the Synthea csv file datasets."
+    ,temporary = False
+    ,table_properties = {
+      "pipelines.autoOptimize.managed" : "true"
+      ,"pipelines.autoOptimize.zOrderCols" : None
+      ,"pipelines.reset.allowed" : "true"}
+  )
+  def synthea_schemas():
+    return spark.createDataFrame(ddl_files)
