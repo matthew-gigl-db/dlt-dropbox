@@ -26,8 +26,7 @@ import main
 
 # COMMAND ----------
 
-# ddl_path = main.get_absolute_path("..", "fixtures", "ddl")
-ddl_path = spark.conf.get('bundle.sourcePath') + "/../fixtures/ddl"
+ddl_path = main.get_absolute_path("..", "fixtures", "ddl")
 ddl_path
 
 # COMMAND ----------
@@ -80,7 +79,7 @@ Pipeline = main.IngestionDLT(
     # ,env_mode = env_mode
     # ,catalog = catalog_name
     # ,schema = schema_name
-    ,volume = volume_name
+    ,volume = spark.conf.get("workflow_inputs.volume_path")
 )
 
 # COMMAND ----------

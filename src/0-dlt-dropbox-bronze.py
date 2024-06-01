@@ -87,7 +87,7 @@ Pipeline = main.IngestionDLT(
     # ,env_mode = env_mode
     # ,catalog = catalog_name
     # ,schema = schema_name
-    ,volume = volume_name
+    ,volume = spark.conf.get("workflow_inputs.volume_path")
 )
 
 # COMMAND ----------

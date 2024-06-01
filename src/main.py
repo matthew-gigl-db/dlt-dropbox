@@ -181,7 +181,7 @@ class IngestionDLT:
             return spark.readStream.table(f"LIVE.{bronze_table}").where(col("inputFileName") == lit(filename))
         
     ### Load DDL Files From Workspace 
-    def load_ddl_files(self, ddl_df: pd.DataFrame = ddl_df):
+    def load_ddl_files(self, ddl_df: pd.DataFrame):
         @dlt.table(
             name = "synthea_silver_schemas"
             ,comment = "Reference table containing the schema definitions for the Synthea csv file datasets."
