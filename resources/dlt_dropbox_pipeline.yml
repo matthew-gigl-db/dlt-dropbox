@@ -7,7 +7,7 @@ resources:
         workflow_inputs.env_mode: prd
         workflow_inputs.catalog_name: mgiglia
         workflow_inputs.schema_name: synthea
-        workflow_inputs.volume_name: synthetic_files_raw
+        workflow_inputs.volume_path: /Volumes/${dlt_dropbox_pipeline.catalog}/synthea/synthetic_files_raw
         bundle.sourcePath: /Workspace${workspace.file_path}/src
       libraries:
         - notebook:
