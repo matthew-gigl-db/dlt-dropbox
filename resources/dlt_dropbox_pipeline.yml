@@ -4,9 +4,9 @@ resources:
     dlt_dropbox_pipeline:
       name: synthea-meta-ingestion-dropbox
       configuration:
-        workflow_inputs.env_mode: prd
-        workflow_inputs.catalog_name: mgiglia
-        workflow_inputs.schema_name: synthea
+        workflow_inputs.host: ${workspace.host}
+        workflow_inputs.databricks_pat_name: databricks-pat
+        workflow_inputs.secret_scope: matthew-giglia
         workflow_inputs.volume_path: /Volumes/${dlt_dropbox_pipeline.catalog}/synthea/synthetic_files_raw
         bundle.sourcePath: /Workspace${workspace.file_path}/src
       libraries:
