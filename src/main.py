@@ -6,6 +6,7 @@ from pyspark.sql.streaming import DataStreamReader, DataStreamWriter
 from typing import Callable
 import os
 import pandas as pd
+from databricks.sdk import WorkspaceClient
 
 ##########################
 ####### operations #######
@@ -55,7 +56,7 @@ def get_absolute_path(*relative_parts):
     else:
         return os.path.join(*relative_parts)
     
-def retrieve_ddl_files(ddl_path: str = ddl_path, workspace_client: WorkspaceClient =  w) -> pd.DataFrame:
+def retrieve_ddl_files(ddl_path: str, workspace_client: WorkspaceClient) -> pd.DataFrame:
   """Retrieve all ddl files from the given path and load into a pandas dataframe."""
   ddl_files = [file.as_dict() for file in w.workspace.list(path = ddl_path)]
   for ddl_file in ddl_files:

@@ -26,7 +26,8 @@ import main
 
 # COMMAND ----------
 
-ddl_path = main.get_absolute_path("..", "fixtures", "ddl")
+# ddl_path = main.get_absolute_path("..", "fixtures", "ddl")
+ddl_path = spark.conf.get('bundle.sourcePath') + "/../fixtures/ddl"
 ddl_path
 
 # COMMAND ----------
@@ -54,8 +55,8 @@ w = WorkspaceClient()
 
 ddl_files = main.retrieve_ddl_files(
   ddl_path = ddl_path
-  ,workspace_client=w
-)
+  ,workspace_client = w
+) 
 
 # COMMAND ----------
 
