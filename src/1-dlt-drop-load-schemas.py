@@ -22,18 +22,6 @@ import main
 
 # COMMAND ----------
 
-# import os
-
-# def get_absolute_path(*relative_parts):
-#     if 'dbutils' in globals():
-#         base_dir = os.path.dirname(dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()) # type: ignore
-#         path = os.path.normpath(os.path.join(base_dir, *relative_parts))
-#         return path if path.startswith("/Workspace") else "/Workspace" + path
-#     else:
-#         return os.path.join(*relative_parts)
-
-# COMMAND ----------
-
 ddl_path = spark.conf.get('bundle.fixturePath') + "/ddl"
 ddl_path
 
@@ -48,21 +36,6 @@ w = WorkspaceClient(
 
 # COMMAND ----------
 
-# import pandas as pd
-
-# def retrieve_ddl_files(ddl_path: str = ddl_path, workspace_client: WorkspaceClient =  w) -> pd.DataFrame:
-#   """Retrieve all ddl files from the given path and load into a pandas dataframe."""
-#   ddl_files = [file.as_dict() for file in w.workspace.list(path = ddl_path)]
-#   for ddl_file in ddl_files:
-#     path = ddl_file.get("path")
-#     ddl_file["table_name"] = path.split("/")[-1].replace(".ddl", "")
-#     with open(path, 'r') as file:
-#       ddl_file["ddl"] = file.read()
-#   return pd.DataFrame(ddl_files)
-
-
-# COMMAND ----------
-
 ddl_files = main.retrieve_ddl_files(
   ddl_path = ddl_path
   ,workspace_client = w
@@ -70,26 +43,8 @@ ddl_files = main.retrieve_ddl_files(
 
 # COMMAND ----------
 
-# def load_ddl_files(ddl_df: pd.DataFrame = ddl_df):
-#   @dlt.table(
-#     name = "synthea_silver_schemas"
-#     ,comment = "Reference table containing the schema definitions for the Synthea csv file datasets."
-#     ,temporary = False
-#     ,table_properties = {
-#       "pipelines.autoOptimize.managed" : "true"
-#       ,"pipelines.autoOptimize.zOrderCols" : None
-#       ,"pipelines.reset.allowed" : "true"}
-#   )
-#   def synthea_schemas():
-#     return spark.createDataFrame(ddl_files)
-
-# COMMAND ----------
-
 Pipeline = main.IngestionDLT(
     spark = spark
-    # ,env_mode = env_mode
-    # ,catalog = catalog_name
-    # ,schema = schema_name
     ,volume = spark.conf.get("workflow_inputs.volume_path")
 )
 
