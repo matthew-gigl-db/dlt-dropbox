@@ -85,20 +85,10 @@ class IngestionDLT:
     def __init__(
         self
         ,spark: SparkSession # = spark
-        # ,env_mode: str = "dev"
-        # ,catalog: str = "lakehouse"
-        # ,schema: str = "landing"
         ,volume: str
     ):
         self.spark = spark
-        # self.env_mode = env_mode
         self.volume = volume
-
-        # use_catalog_schema(catalog = self.catalog, schema = self.schema, env_mode = self.env_mode, verbose = False)
-        # if self.env_mode == "prd":
-        #     self.catalog_set = self.catalog
-        # else:
-        #     self.catalog_set = f"{self.catalog}_{self.env_mode}"
 
     def __repr__(self):
         return f"""IngestionDLT(volume='{self.volume}')"""
@@ -114,9 +104,7 @@ class IngestionDLT:
             ,table_properties = table_properties
 
         )
-        def bronze_ingestion(spark = self.spark, source_folder_path_from_volume = source_folder_path_from_volume, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, options = options
-                            #  , catalog = self.catalog_set, schema = self.schema
-                             , volume = self.volume):
+        def bronze_ingestion(spark = self.spark, source_folder_path_from_volume = source_folder_path_from_volume, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, options = options, volume = self.volume):
 
             if source_folder_path_from_volume == "":
                 file_path = f"{volume}/"
