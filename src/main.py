@@ -66,6 +66,15 @@ def retrieve_ddl_files(ddl_path: str, workspace_client: WorkspaceClient) -> pd.D
       ddl_file["ddl"] = file.read()
   return pd.DataFrame(ddl_files)
 
+def recursive_ls(path):
+    files = []
+    for item in dbutils.fs.ls(path):
+        if item.isDir():
+            files.extend(recursive_ls(item.path))
+        else:
+            files.append(item.path)
+    return files
+
 ###########################
 ### classes and methods ###
 ###########################

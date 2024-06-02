@@ -118,13 +118,17 @@ Pipeline.list_dropbox_files(
 
 # COMMAND ----------
 
-# filenames = spark.sql(f"select distinct * from {catalog_name}.{schema_name}.temp_landed_bronze_files").collect()
-# filenames_list = [row.inputFileName for row in filenames]
-# filenames_list
+full_paths = main.recursive_ls(volume_path)
+shortened_names = []
+for full_path in full_paths:
+  filename = full_path.split("/")[-1]
+  shortened_names.append(filename)
+filenames_list = list(set(shortened_names))
+filenames_list
 
 # COMMAND ----------
 
-filenames_list = ("encounters.csv", "allergies.csv", "imaging_studies.csv", "providers.csv", "medications.csv", "patients.csv", "immunizations.csv", "payer_transitions.csv", "conditions.csv", "observations.csv", "claims_transactions.csv", "careplans.csv", "supplies.csv", "procedures.csv", "devices.csv", "payers.csv", "claims.csv", "organizations.csv")
+# filenames_list = ("encounters.csv", "allergies.csv", "imaging_studies.csv", "providers.csv", "medications.csv", "patients.csv", "immunizations.csv", "payer_transitions.csv", "conditions.csv", "observations.csv", "claims_transactions.csv", "careplans.csv", "supplies.csv", "procedures.csv", "devices.csv", "payers.csv", "claims.csv", "organizations.csv")
 
 # COMMAND ----------
 
