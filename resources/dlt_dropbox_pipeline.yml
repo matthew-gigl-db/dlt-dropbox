@@ -9,7 +9,7 @@ resources:
         workflow_inputs.secret_scope: ${var.secrets_scope}
         workflow_inputs.volume_path: ${var.raw_file_path}
         bundle.sourcePath: /Workspace${workspace.file_path}/src
-        bundle.fixturePath: ${workspace.file_path}/fixtures
+        bundle.fixturePath: /Workspace${workspace.file_path}/fixtures
       libraries:
         - notebook:
             path: ../src/0-dlt-dropbox-bronze.py

@@ -26,7 +26,7 @@ import main
 
 # COMMAND ----------
 
-ddl_path = spark.conf.get('bundle.fixturePath')
+ddl_path = spark.conf.get('bundle.fixturePath') + "/ddl"
 ddl_path
 
 # COMMAND ----------
