@@ -15,12 +15,14 @@ resources:
           - matthew.giglia@databricks.com
 
       tasks:
-        # - task_key: load_ddl
-        #   pipeline_task:
-        #     pipeline_id: ${resources.pipelines.dlt_load_ddl_pipeline.id}
-        - task_key: refresh_pipeline
+        - task_key: refresh_bronze_pipeline
           pipeline_task:
-            pipeline_id: ${resources.pipelines.dlt_dropbox_pipeline.id}
+            pipeline_id: ${resources.pipelines.dlt_dropbox_bronze.id}
+        - task_key: refresh_silver_pipeline
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.dlt_dropbox_silver.id}
+          depends_on:
+            - task_key: refresh_bronze_pipeline
         
       job_clusters:
         - job_cluster_key: job_cluster
