@@ -17,6 +17,8 @@ targets:
     default: true
     workspace:
       host: https://e2-demo-field-eng.cloud.databricks.com
+    variables: 
+      schema: synthea_dev
 
   ## Optionally, there could be a 'staging' target here.
   ## (See Databricks docs on CI/CD at https://docs.databricks.com/dev-tools/bundles/ci-cd.html.)
@@ -39,3 +41,26 @@ targets:
       # This runs as matthew.giglia@databricks.com in production. We could also use a service principal here,
       # see https://docs.databricks.com/dev-tools/bundles/permissions.html.
       user_name: matthew.giglia@databricks.com
+    variables:
+      schema: synthea
+    bundle: # Required.
+      git:
+        origin_url: https://github.com/matthew-gigl-db/dlt-dropbox.git
+        branch: publish
+
+variables:
+  catalog:
+    description: The catalog where the schemas will be created.
+    default: mgiglia
+  schema:
+    description: The schema where used for storing tables, views, functions, models, or new volumes.
+    default: synthea_dev
+  raw_file_path:
+    description: The source file path of the files to be loaded.  
+    default: /Volumes/mgiglia/synthea/synthetic_files_raw
+  secrets_scope:
+    description: The Databricks Secrets Scope used for storing credentials. 
+    default: matthew-giglia
+  databricks_pat_key:
+    description: The key used in Databricks Secrets to retrieve the Databricks Personal Access token with the previously defined secrets_scope.  
+    default: databricks_pat

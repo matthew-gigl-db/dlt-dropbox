@@ -41,15 +41,9 @@ import main
 # COMMAND ----------
 
 # # used for active development, but not run during DLT execution, use DLT configurations instead
-# dbutils.widgets.dropdown(name = "env_mode", defaultValue = "prd", choices = ["dev", "tst", "uat", "prd"], label = "Environment Mode")
-# dbutils.widgets.text(name = "catalog_name", defaultValue="", label="Catalog Name")
-# dbutils.widgets.text(name = "schema_name", defaultValue="synthea", label="Schema Name")
-# dbutils.widgets.text(name = "volume_name", defaultValue="synthetic_files_raw", label="Volume Name")
+# dbutils.widgets.text(name = "volume_path", defaultValue="/Volumes/mgiglia/synthea/synthetic_files_raw", label="Volume Path")
 
-# spark.conf.set("workflow_inputs.env_mode", dbutils.widgets.get(name = "env_mode"))
-# spark.conf.set("workflow_inputs.catalog_name", dbutils.widgets.get(name = "catalog_name"))
-# spark.conf.set("workflow_inputs.schema_name", dbutils.widgets.get(name = "schema_name"))
-# spark.conf.set("workflow_inputs.volume_name", dbutils.widgets.get(name = "volume_name"))
+# spark.conf.set("workflow_inputs.volume_path", dbutils.widgets.get(name = "volume_path"))
 
 # COMMAND ----------
 
@@ -64,16 +58,8 @@ import main
 
 # COMMAND ----------
 
-env_mode = spark.conf.get("workflow_inputs.env_mode")
-catalog_name = spark.conf.get("workflow_inputs.catalog_name")
-schema_name = spark.conf.get("workflow_inputs.schema_name")
-volume_name = spark.conf.get("workflow_inputs.volume_name")
-volume_path = f"/Volumes/{catalog_name}/{schema_name}/{volume_name}/"
+volume_path = spark.conf.get("workflow_inputs.volume_path")
 print(f"""
-    env_mode = {env_mode}
-    catalog_name = {catalog_name}
-    schema_name = {schema_name}
-    volume_name = {volume_name}
     volume_path = {volume_path}
 """)
 
@@ -88,10 +74,7 @@ print(f"""
 
 Pipeline = main.IngestionDLT(
     spark = spark
-    ,env_mode = env_mode
-    ,catalog = catalog_name
-    ,schema = schema_name
-    ,volume = volume_name
+    ,volume = spark.conf.get("workflow_inputs.volume_path")
 )
 
 # COMMAND ----------
@@ -122,16 +105,20 @@ Pipeline.list_dropbox_files(
 
 # COMMAND ----------
 
-# filenames = spark.sql(f"select distinct * from {catalog_name}.{schema_name}.temp_landed_bronze_files").collect()
-# filenames_list = [row.inputFileName for row in filenames]
-# filenames_list
+full_paths = main.recursive_ls(f"{volume_path}/output/csv")
+shortened_names = []
+for full_path in full_paths:
+  filename = full_path.split("/")[-1]
+  shortened_names.append(filename)
+filenames_list = list(set(shortened_names))
+filenames_list
 
 # COMMAND ----------
 
-filenames_list = ("encounters.csv", "allergies.csv", "imaging_studies.csv", "providers.csv", "medications.csv", "patients.csv", "immunizations.csv", "payer_transitions.csv", "conditions.csv", "observations.csv", "claims_transactions.csv", "careplans.csv", "supplies.csv", "procedures.csv", "devices.csv", "payers.csv", "claims.csv", "organizations.csv")
+# filenames_list = ("encounters.csv", "allergies.csv", "imaging_studies.csv", "providers.csv", "medications.csv", "patients.csv", "immunizations.csv", "payer_transitions.csv", "conditions.csv", "observations.csv", "claims_transactions.csv", "careplans.csv", "supplies.csv", "procedures.csv", "devices.csv", "payers.csv", "claims.csv", "organizations.csv")
 
 # COMMAND ----------
 
 for filename in filenames_list:
   name = filename.replace(".", "_")
-  Pipeline.split_bronze_table(bronze_table = "synthea_csv_bronze", filename = filename, table_name = name, live = True)
+  Pipeline.split_bronze_table(bronze_table = "synthea_csv_bronze", filename = filename, table_name = name)
