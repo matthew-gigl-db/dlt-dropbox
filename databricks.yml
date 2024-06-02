@@ -63,4 +63,4 @@ variables:
     default: matthew-giglia
   databricks_pat_key:
     description: The key used in Databricks Secrets to retrieve the Databricks Personal Access token with the previously defined secrets_scope.  
-    default: databricks-pat
+    default: databricks_pat

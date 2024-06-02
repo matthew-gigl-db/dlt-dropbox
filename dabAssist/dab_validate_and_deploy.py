@@ -126,6 +126,11 @@ print(
 
 # COMMAND ----------
 
+cmd = f"{dc.cli_path} bundle run -h"
+!{cmd}
+
+# COMMAND ----------
+
 print(
   bundle.run(
     key = "dlt_dropbox_pipeline"
