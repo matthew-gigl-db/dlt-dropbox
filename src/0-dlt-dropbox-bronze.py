@@ -118,7 +118,7 @@ Pipeline.list_dropbox_files(
 
 # COMMAND ----------
 
-full_paths = main.recursive_ls(volume_path)
+full_paths = main.recursive_ls(f"{volume_path}/output/csv")
 shortened_names = []
 for full_path in full_paths:
   filename = full_path.split("/")[-1]
