@@ -13,6 +13,8 @@ resources:
       libraries:
         - notebook:
             path: ../src/0-dlt-dropbox-bronze.py
+        - notebook:
+            path: ../src/1-dlt-drop-load-schemas.py
       target: ${var.schema}
       clusters:
         - label: default

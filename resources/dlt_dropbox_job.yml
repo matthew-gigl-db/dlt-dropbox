@@ -15,6 +15,9 @@ resources:
           - matthew.giglia@databricks.com
 
       tasks:
+        # - task_key: load_ddl
+        #   pipeline_task:
+        #     pipeline_id: ${resources.pipelines.dlt_load_ddl_pipeline.id}
         - task_key: refresh_pipeline
           pipeline_task:
             pipeline_id: ${resources.pipelines.dlt_dropbox_pipeline.id}
