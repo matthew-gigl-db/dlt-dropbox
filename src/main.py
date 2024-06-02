@@ -6,7 +6,7 @@ from pyspark.sql.streaming import DataStreamReader, DataStreamWriter
 from typing import Callable
 import os
 import pandas as pd
-from databricks.sdk import WorkspaceClient
+from databricks.sdk import WorkspaceClient, dbutils
 
 ##########################
 ####### operations #######
