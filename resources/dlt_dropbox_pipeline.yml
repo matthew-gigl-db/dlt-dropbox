@@ -38,7 +38,7 @@ resources:
         bundle.fixturePath: /Workspace${workspace.file_path}/fixtures
       libraries:
         - notebook:
-            path: ../src/1-dlt-drop-load-schemas.py
+            path: ../src/1-dlt-dropbox-load-schemas.py
       target: ${var.schema}
       clusters:
         - label: default

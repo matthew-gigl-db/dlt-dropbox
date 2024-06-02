@@ -133,8 +133,25 @@ print(
 
 print(
   bundle.run(
-    key = "dlt_dropbox_pipeline"
+    key = "dlt_dropbox_bronze"
     ,pipeline_flag = "--validate-only"
+  )
+)
+
+# COMMAND ----------
+
+print(
+  bundle.run(
+    key = "dlt_dropbox_silver"
+    ,pipeline_flag = "--validate-only"
+  )
+)
+
+# COMMAND ----------
+
+print(
+  bundle.run(
+    key = "dlt_dropbox_job"
   )
 )
 
