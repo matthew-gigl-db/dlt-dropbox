@@ -98,7 +98,7 @@ class IngestionDLT:
     def __repr__(self):
         return f"""IngestionDLT(volume='{self.volume}')"""
 
-    def ingest_raw_to_bronze(self, table_name: str, table_comment: str, table_properties: dict, source_folder_path_from_volume: str = "", maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = False, skipRows: int = 0, options: dict = None):,options: dict = None):
+    def ingest_raw_to_bronze(self, table_name: str, table_comment: str, table_properties: dict, source_folder_path_from_volume: str = "", maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = False, skipRows: int = 0, options: dict = None):
         """
         Ingests all files in a volume's path to a key value pair bronze table.
         """
