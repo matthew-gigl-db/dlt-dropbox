@@ -130,7 +130,7 @@ class IngestionDLT:
     def __repr__(self):
         return f"""IngestionDLT(volume='{self.volume}')"""
 
-    def ingest_raw_to_bronze(self, table_name: str, table_comment: str, table_properties: dict, source_folder_path_from_volume: str = "", maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = False, skipRows: int = 0, options: dict = None):
+    def ingest_raw_to_bronze(self, table_name: str, table_comment: str, table_properties: dict, source_folder_path_from_volume: str = "", maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = False, csv_schema: str = None, skipRows: int = 0, header: bool = True, delimiter: str = ",", file_type: str = "csv", options: dict = None):
         """
         Ingests all files in a volume's path to a key value pair bronze table.
         """
@@ -148,7 +148,10 @@ class IngestionDLT:
             else:
                 file_path = f"{volume}/{source_folder_path_from_volume}/"
 
-            raw_df = read_stream_raw(spark = spark, path = file_path, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, skipRows = skipRows, options = options)
+            if file_type == "csv":
+                raw_df = read_stream_csv(spark = spark, path = file_path, maxFiles = maxFiles, maxBytes = maxBytes, schema = csv_schema, skipRows = skipRows, header = header, delimiter = delimiter, options = options)
+            else: 
+                raw_df = read_stream_raw(spark = spark, path = file_path, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, options = options)
 
             bronze_df = (raw_df
                 .withColumn("inputFilename", col("_metadata.file_name"))
