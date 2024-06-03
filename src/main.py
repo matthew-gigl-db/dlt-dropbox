@@ -259,7 +259,7 @@ class IngestionDLT:
         )
         def stage_silver_synthea():
             sdf = (
-                spark.readStream.table(f"LIVE.{bronze_table}")
+                spark.readStream.table(f"{bronze_table}")
                 .withColumn("sequence_by", F.col("fileMetadata.file_modification_time"))
                 .withColumn("data", F.from_csv(F.col("value"), schema=ddl)).alias("data")
             )
