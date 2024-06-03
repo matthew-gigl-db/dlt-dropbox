@@ -111,7 +111,23 @@ def recursive_ls(path):
             files.append(item.path)
     return files
 
-# def define_silver_csv_with_schema(table_name: str, ddl: str):
+# flatten struct columns in a spark data frame
+def explode_and_split(df):
+  newDF = df
+  for colName in df.columns:
+    colType = df.schema[colName].dataType
+    if isinstance(colType, ArrayType):
+      newDF = newDF.withColumn(colName, explode_outer(col(colName)))
+      # newDF = explodeAndSplit(newDF)  # Recurse if column is an array
+    elif isinstance(colType, StructType):
+      for field in colType.fields:
+          fieldName = field.name
+          newDF = newDF.withColumn(f"{fieldName}", col(f"{colName}.{fieldName}"))
+      newDF = newDF.drop(colName)
+      # newDF = explodeAndSplit(newDF)  # Recurse if column is a struct
+  return newDF
+
+
 
 
 ###########################
