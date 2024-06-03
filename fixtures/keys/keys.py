@@ -1,1 +1,1 @@
-allergies_keys = ["patient_id", "encounter_id", "code"]
+allergies = ["patient_id", "encounter_id", "code"]

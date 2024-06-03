@@ -50,7 +50,7 @@ Pipeline.stream_silver(
   bronze_table = f"{catalog}.{schema}.allergies_csv_bronze"
   ,table_name = "allergies"
   ,sequence_by = "sequence_by"
-  ,keys = allergies_keys
+  ,keys = keys.allergies
   ,schema = None
 )
 
