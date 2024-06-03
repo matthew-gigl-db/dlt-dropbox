@@ -211,36 +211,36 @@ class IngestionDLT:
             )
   
     ### stream changes into target silver table
-    def stream_silver(self, bronze_table: str, table_name: str, ddl: str, keys: list, sequence_by: str):
-         dlt.create_streaming_table(
-            name = table_name
-            ,comment = f"Silver database table created from ingested source data from associated {bronze_table} table."
-            # ,spark_conf={"<key>" : "<value", "<key" : "<value>"}
-            # ,table_properties={"<key>" : "<value>", "<key>" : "<value>"}
-            ,table_properties = None 
-            # ,partition_cols=["<partition-column>", "<partition-column>"]
-            ,partition_cols = None
-            # ,path="<storage-location-path>"
-            ,schema = ddl
-            # ,expect_all = {"<key>" : "<value", "<key" : "<value>"}
-            # ,expect_all_or_drop = {"<key>" : "<value", "<key" : "<value>"}
-            # ,expect_all_or_fail = {"<key>" : "<value", "<key" : "<value>"}
-        )
+    # def stream_silver(self, bronze_table: str, table_name: str, ddl: str, keys: list, sequence_by: str):
+    #      dlt.create_streaming_table(
+    #         name = table_name
+    #         ,comment = f"Silver database table created from ingested source data from associated {bronze_table} table."
+    #         # ,spark_conf={"<key>" : "<value", "<key" : "<value>"}
+    #         # ,table_properties={"<key>" : "<value>", "<key>" : "<value>"}
+    #         ,table_properties = None 
+    #         # ,partition_cols=["<partition-column>", "<partition-column>"]
+    #         ,partition_cols = None
+    #         # ,path="<storage-location-path>"
+    #         ,schema = ddl
+    #         # ,expect_all = {"<key>" : "<value", "<key" : "<value>"}
+    #         # ,expect_all_or_drop = {"<key>" : "<value", "<key" : "<value>"}
+    #         # ,expect_all_or_fail = {"<key>" : "<value", "<key" : "<value>"}
+    #     )
          
-        @dlt.apply_changes(
-            target = table_name
-            ,source = bronze_table
-            ,keys = keys
-            ,sequence_by = sequence_by
-            ,ignore_null_updates = True
-            ,apply_as_deletes = None
-            ,apply_as_truncates = None
-            ,column_list = None
-            ,except_column_list = None
-            ,stored_as_scd_type = "1"
-            ,track_history_column_list = None
-            ,track_history_except_column_list = None
-        )
+    #     @dlt.apply_changes(
+    #         target = table_name
+    #         ,source = bronze_table
+    #         ,keys = keys
+    #         ,sequence_by = sequence_by
+    #         ,ignore_null_updates = True
+    #         ,apply_as_deletes = None
+    #         ,apply_as_truncates = None
+    #         ,column_list = None
+    #         ,except_column_list = None
+    #         ,stored_as_scd_type = "1"
+    #         ,track_history_column_list = None
+    #         ,track_history_except_column_list = None
+    #     )
 
         
         
