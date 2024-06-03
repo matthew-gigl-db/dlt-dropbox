@@ -58,6 +58,7 @@ def read_stream_csv(spark: SparkSession, path: str, maxFiles: int, maxBytes: str
         stream_schema = schema
     else:
         stream_schema = "value STRING"
+        delimiter = "~"
     
     read_stream = (
         spark
