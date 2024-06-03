@@ -54,23 +54,3 @@ for i in ddl_ref:
     ,sequence_by = "sequence_by"
     ,keys = getattr(keys, table_name)
   )
-
-# COMMAND ----------
-
-# Pipeline.stream_silver(
-#   bronze_table = f"{catalog}.{schema}.allergies_csv_bronze"
-#   ,table_name = "allergies"
-#   ,sequence_by = "sequence_by"
-#   ,keys = keys.allergies
-#   ,schema = None
-# )
-
-# COMMAND ----------
-
-# Pipeline.stream_silver(
-#   bronze_table = f"{catalog}.{schema}.careplans_csv_bronze"
-#   ,table_name = "careplans"
-#   ,sequence_by = "sequence_by"
-#   ,keys = keys.careplans
-#   ,schema = None
-# )
