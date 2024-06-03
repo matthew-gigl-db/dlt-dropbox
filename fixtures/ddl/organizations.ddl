@@ -1,0 +1,1 @@
+struct<organization_id:string,name:string,address:string,city:string,state:string,zip:string,lat:double,lon:double,phone:string,revenue:double,utilization:int>
