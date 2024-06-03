@@ -282,7 +282,8 @@ class IngestionDLT:
             # ,expect_all_or_drop = {"<key>" : "<value", "<key" : "<value>"}
             # ,expect_all_or_fail = {"<key>" : "<value", "<key" : "<value>"}
         )
-         
+
+
         dlt.apply_changes(
             target = table_name
             ,source =  f"{table_name}_stage"
