@@ -51,6 +51,38 @@ def read_stream_raw(spark: SparkSession, path: str, maxFiles: int, maxBytes: str
 
     return read_stream
 
+# read streaming data as whole text using autoloader    
+def read_stream_csv(spark: SparkSession, path: str, maxFiles: int, maxBytes: str, schema: str = None, skipRows: int = 0, header: bool = True, delimiter: str = ",", options: dict = None) -> DataFrame:
+    
+    if schema is not None:
+        stream_schema = schema
+    else:
+        stream_schema = "value STRING"
+    
+    read_stream = (
+        spark
+        .readStream
+        .format("cloudFiles")
+        .option("cloudFiles.format", "csv")
+        .option("schema", schema)
+        .option("cloudFiles.maxBytesPerTrigger", maxBytes)
+        .option("cloudFiles.maxFilesPerTrigger", maxFiles)
+        .option("skipRows", skipRows)
+        .option("header", header)
+        .option("delimiter", delimiter)
+    )
+
+    if options is not None:
+        read_stream = read_stream.options(**options)
+
+    read_stream = (
+        read_stream
+        .schema(stream_schema)
+        .load(path)
+    )
+
+    return read_stream
+
 def get_absolute_path(*relative_parts):
     if 'dbutils' in globals():
         base_dir = os.path.dirname(dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()) # type: ignore
