@@ -52,7 +52,7 @@ for i in ddl_ref:
     bronze_table = f"{catalog}.{schema}.{table_name}_csv_bronze"
     ,table_name = table_name
     ,sequence_by = "sequence_by"
-    ,keys = getattr(f"keys.{table_name}")
+    ,keys = getattr(keys, table_name)
   )
 
 # COMMAND ----------
