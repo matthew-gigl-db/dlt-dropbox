@@ -1,0 +1,1 @@
+struct<start:date,stop:date,patient_id:string,encounter_id:string,code:string,description:string>
