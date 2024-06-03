@@ -77,7 +77,7 @@ def recursive_ls(path):
             files.append(item.path)
     return files
 
-def define_silver_csv_with_schema(table_name: str, ddl: str):
+# def define_silver_csv_with_schema(table_name: str, ddl: str):
 
 
 ###########################
