@@ -267,7 +267,7 @@ class IngestionDLT:
 
   
     ## stream changes into target silver table
-    def stream_silver(self, bronze_table: str, table_name: str, sequence_by: str, keys: list, schema: str = None, except_column_list: list = None):
+    def create_silver_streaming_tables(self, bronze_table: str, table_name: str, sequence_by: str, keys: list, schema: str = None, except_column_list: list = None):
         # create the target table
          dlt.create_streaming_table(
             name = table_name
@@ -283,6 +283,8 @@ class IngestionDLT:
             # ,expect_all_or_drop = {"<key>" : "<value", "<key" : "<value>"}
             # ,expect_all_or_fail = {"<key>" : "<value", "<key" : "<value>"}
         )
+    
+    def apply_changes_to_silver(self, table_name: str, sequence_by: str, keys: list, schema: str = None, except_column_list: list = None):
         # now apply changes 
         dlt.apply_changes(
             target = table_name

@@ -47,11 +47,17 @@ for i in ddl_ref:
 
 # COMMAND ----------
 
-Pipeline.stream_silver(
+Pipeline.create_silver_streaming_tables(
   bronze_table = f"{catalog}.{schema}.allergies_csv_bronze"
   ,table_name = "allergies"
-  ,sequence_by = "sequence_by"
-  ,keys = ["patient_id", "encounter_id", "code"]
-  ,schema = None
-  ,except_column_list = None
 )
+
+# COMMAND ----------
+
+# Pipeline.apply_changes_to_silver(
+#   table_name = "allergies"
+#   ,sequence_by = "sequence_by"
+#   ,keys = ["patient_id", "encounter_id", "code"]
+#   ,schema = None
+#   ,except_column_list = None
+# )
