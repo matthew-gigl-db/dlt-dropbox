@@ -260,8 +260,8 @@ class IngestionDLT:
         def stage_silver_synthea():
             sdf = (
                 spark.readStream.table(f"{bronze_table}")
-                .withColumn("sequence_by", F.col("fileMetadata.file_modification_time"))
-                .withColumn("data", F.from_csv(F.col("value"), schema=ddl)).alias("data")
+                .withColumn("sequence_by", col("fileMetadata.file_modification_time"))
+                .withColumn("data", from_csv(col("value"), schema=ddl)).alias("data")
             )
             return explode_and_split(sdf)
 
