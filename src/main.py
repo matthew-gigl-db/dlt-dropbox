@@ -27,7 +27,7 @@ def use_catalog_schema(catalog: str, schema: str, env_mode: str = "dev", verbose
         return spark.sql("""select current_catalog(), current_schema();""")
 
 # read streaming data as whole text using autoloader    
-def read_stream_raw(spark: SparkSession, path: str, maxFiles: int, maxBytes: str, wholeText: bool = False, options: dict = None) -> DataFrame:
+def read_stream_raw(spark: SparkSession, path: str, maxFiles: int, maxBytes: str, wholeText: bool = False, skipRows: int = 0, options: dict = None) -> DataFrame:
     stream_schema = "value STRING"
     read_stream = (
         spark
@@ -37,6 +37,7 @@ def read_stream_raw(spark: SparkSession, path: str, maxFiles: int, maxBytes: str
         .option("wholetext", wholeText)
         .option("cloudFiles.maxBytesPerTrigger", maxBytes)
         .option("cloudFiles.maxFilesPerTrigger", maxFiles)
+        .option("skipRows", skipRows)
     )
 
     if options is not None:
@@ -97,7 +98,7 @@ class IngestionDLT:
     def __repr__(self):
         return f"""IngestionDLT(volume='{self.volume}')"""
 
-    def ingest_raw_to_bronze(self, table_name: str, table_comment: str, table_properties: dict, source_folder_path_from_volume: str = "", maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = False, options: dict = None):
+    def ingest_raw_to_bronze(self, table_name: str, table_comment: str, table_properties: dict, source_folder_path_from_volume: str = "", maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = False, skipRows: int = 0, options: dict = None):,options: dict = None):
         """
         Ingests all files in a volume's path to a key value pair bronze table.
         """
@@ -108,14 +109,14 @@ class IngestionDLT:
             ,table_properties = table_properties
 
         )
-        def bronze_ingestion(spark = self.spark, source_folder_path_from_volume = source_folder_path_from_volume, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, options = options, volume = self.volume):
+        def bronze_ingestion(spark = self.spark, source_folder_path_from_volume = source_folder_path_from_volume, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, skipRows = skipRows, options = options, volume = self.volume):
 
             if source_folder_path_from_volume == "":
                 file_path = f"{volume}/"
             else:
                 file_path = f"{volume}/{source_folder_path_from_volume}/"
 
-            raw_df = read_stream_raw(spark = spark, path = file_path, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, options = options)
+            raw_df = read_stream_raw(spark = spark, path = file_path, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, skipRows = skipRows, options = options)
 
             bronze_df = (raw_df
                 .withColumn("inputFilename", col("_metadata.file_name"))
@@ -135,12 +136,12 @@ class IngestionDLT:
             return bronze_df
     
     ### Ingest from multiple subfolders of the same Volume into one bronze table.
-    def ingest_raw_to_bronze_synchronous(self, table_names: list, table_comments: list, table_properties: dict, source_folder_path_from_volumes: str, maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = True, options: dict = None):
+    def ingest_raw_to_bronze_synchronous(self, table_names: list, table_comments: list, table_properties: dict, source_folder_path_from_volumes: str, maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = True, skipRows: int = 0, options: dict = None):
         """
             Synchronously ingest from multiple subfolders of the same Volume into more than one bronze table.  Each bronze table created is managed as a streaming Delta Live Table in the same <catalog.schema> as the source volume.  
         """
         for i in range(0,len(table_names)):
-            ingest_raw_to_bronze(self = self, table_name = table_names[i], table_comment = table_comments[i], source_folder_path_from_volume = source_folder_path_from_volumes[i], table_properties = table_properties, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, options = options)
+            ingest_raw_to_bronze(self = self, table_name = table_names[i], table_comment = table_comments[i], source_folder_path_from_volume = source_folder_path_from_volumes[i], table_properties = table_properties, maxFiles = maxFiles, maxBytes = maxBytes, wholeText = wholeText, skipRows = skipRows, options = options)
 
     ### List the file names loaded into bronze.  We'll use this to determine if new files have arrived.  
     def list_dropbox_files(self, bronze_table: str): 
