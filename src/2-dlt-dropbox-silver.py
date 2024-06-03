@@ -44,16 +44,19 @@ for i in ddl_ref:
     ,ddl = ddl
   )
 
-# COMMAND ----------
-
-Pipeline.stream_silver(
-  bronze_table = f"{catalog}.{schema}.allergies_csv_bronze"
-  ,table_name = "allergies"
-  ,sequence_by = "sequence_by"
-  ,keys = keys.allergies
-  ,schema = None
-)
+  Pipeline.stream_silver(
+    bronze_table = f"{catalog}.{schema}.{table_name}_csv_bronze"
+    ,table_name = table_name
+    ,sequence_by = "sequence_by"
+    ,keys = f"keys.{table_name}"
+  )
 
 # COMMAND ----------
 
-
+# Pipeline.stream_silver(
+#   bronze_table = f"{catalog}.{schema}.allergies_csv_bronze"
+#   ,table_name = "allergies"
+#   ,sequence_by = "sequence_by"
+#   ,keys = keys.allergies
+#   ,schema = None
+# )
