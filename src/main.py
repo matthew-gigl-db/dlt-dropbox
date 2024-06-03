@@ -284,22 +284,22 @@ class IngestionDLT:
             # ,expect_all_or_fail = {"<key>" : "<value", "<key" : "<value>"}
         )
     
-    def apply_changes_to_silver(self, table_name: str, sequence_by: str, keys: list, schema: str = None, except_column_list: list = None):
-        # now apply changes 
-        dlt.apply_changes(
-            target = table_name
-            ,source =  f"{table_name}_stage"
-            ,keys = keys
-            ,sequence_by = sequence_by
-            ,ignore_null_updates = True
-            ,apply_as_deletes = None
-            ,apply_as_truncates = None
-            ,column_list = None
-            ,except_column_list = None
-            ,stored_as_scd_type = "1"
-            ,track_history_column_list = None
-            ,track_history_except_column_list = None
-        )
+    # def apply_changes_to_silver(self, table_name: str, sequence_by: str, keys: list, schema: str = None, except_column_list: list = None):
+    #     # now apply changes 
+    #     dlt.apply_changes(
+    #         target = table_name
+    #         ,source =  f"{table_name}_stage"
+    #         ,keys = keys
+    #         ,sequence_by = sequence_by
+    #         ,ignore_null_updates = True
+    #         ,apply_as_deletes = None
+    #         ,apply_as_truncates = None
+    #         ,column_list = None
+    #         ,except_column_list = None
+    #         ,stored_as_scd_type = "1"
+    #         ,track_history_column_list = None
+    #         ,track_history_except_column_list = None
+    #     )
 
 #################
         
