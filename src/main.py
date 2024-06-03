@@ -1,6 +1,7 @@
 import dlt
 from pyspark.sql.functions import *
 from pyspark.sql import DataFrame
+from pyspark.sql.types import *
 from pyspark.sql.session import SparkSession
 from pyspark.sql.streaming import DataStreamReader, DataStreamWriter
 from typing import Callable
@@ -26,7 +27,7 @@ def use_catalog_schema(catalog: str, schema: str, env_mode: str = "dev", verbose
         return spark.sql("""select current_catalog(), current_schema();""")
 
 # read streaming data as whole text using autoloader    
-def read_stream_raw(spark: SparkSession, path: str, maxFiles: int, maxBytes: str, wholeText: bool = True, options: dict = None) -> DataFrame:
+def read_stream_raw(spark: SparkSession, path: str, maxFiles: int, maxBytes: str, wholeText: bool = False, options: dict = None) -> DataFrame:
     stream_schema = "value STRING"
     read_stream = (
         spark
@@ -76,6 +77,9 @@ def recursive_ls(path):
             files.append(item.path)
     return files
 
+def define_silver_csv_with_schema(table_name: str, ddl: str):
+
+
 ###########################
 ### classes and methods ###
 ###########################
@@ -93,7 +97,7 @@ class IngestionDLT:
     def __repr__(self):
         return f"""IngestionDLT(volume='{self.volume}')"""
 
-    def ingest_raw_to_bronze(self, table_name: str, table_comment: str, table_properties: dict, source_folder_path_from_volume: str = "", maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = True, options: dict = None):
+    def ingest_raw_to_bronze(self, table_name: str, table_comment: str, table_properties: dict, source_folder_path_from_volume: str = "", maxFiles: int = 1000, maxBytes: str = "10g", wholeText: bool = False, options: dict = None):
         """
         Ingests all files in a volume's path to a key value pair bronze table.
         """
@@ -190,6 +194,54 @@ class IngestionDLT:
         )
         def synthea_schemas():
             return self.spark.createDataFrame(ddl_df)
+        
+    def stage_silver(self, bronze_table: str, table_name: str, ddl: str):
+        @dlt.table(
+            name = f"{table_name}_stage"
+            ,comment = "Staging Table for data to stage into silver. Normally temporary."
+            ,temporary = False
+            ,table_properties = {
+            "pipelines.autoOptimize.managed" : "true"
+            ,"pipelines.reset.allowed" : "true"}
+        )
+        def stage_silver_synthea():
+            sdf = (
+                self.spark.readStream.table(f"LIVE.{bronze_table}")
+                .withColumn("sequence_by", col(fileMetadata.file_modification_time))
+            )
+  
+    ### stream changes into target silver table
+    def stream_silver(self, bronze_table: str, table_name: str, ddl: str, keys: list, sequence_by: str):
+         dlt.create_streaming_table(
+            name = table_name
+            ,comment = f"Silver database table created from ingested source data from associated {bronze_table} table."
+            # ,spark_conf={"<key>" : "<value", "<key" : "<value>"}
+            # ,table_properties={"<key>" : "<value>", "<key>" : "<value>"}
+            ,table_properties = None 
+            # ,partition_cols=["<partition-column>", "<partition-column>"]
+            ,partition_cols = None
+            # ,path="<storage-location-path>"
+            ,schema = ddl
+            # ,expect_all = {"<key>" : "<value", "<key" : "<value>"}
+            # ,expect_all_or_drop = {"<key>" : "<value", "<key" : "<value>"}
+            # ,expect_all_or_fail = {"<key>" : "<value", "<key" : "<value>"}
+        )
+         
+        @dlt.apply_changes(
+            target = table_name
+            ,source = bronze_table
+            ,keys = keys
+            ,sequence_by = sequence_by
+            ,ignore_null_updates = True
+            ,apply_as_deletes = None
+            ,apply_as_truncates = None
+            ,column_list = None
+            ,except_column_list = None
+            ,stored_as_scd_type = "1"
+            ,track_history_column_list = None
+            ,track_history_except_column_list = None
+        )
+
         
         
 
