@@ -44,6 +44,10 @@ for i in ddl_ref:
     ,ddl = ddl
   )
 
+# COMMAND ----------
+
+for i in ddl_ref:
+  table_name = i["table_name"]
   Pipeline.stream_silver(
     bronze_table = f"{catalog}.{schema}.{table_name}_csv_bronze"
     ,table_name = table_name
