@@ -10,7 +10,7 @@ import main
 
 # COMMAND ----------
 
-key_path = spark.conf.get('bundle.fixturePath') + "/ddl"
+key_path = spark.conf.get('bundle.fixturePath') + "/keys"
 sys.path.append(os.path.abspath(key_path))
 
 import keys
