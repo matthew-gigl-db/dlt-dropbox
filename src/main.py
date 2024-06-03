@@ -259,11 +259,14 @@ class IngestionDLT:
         )
         def stage_silver_synthea():
             sdf = (
-                self.spark.readStream.table(f"LIVE.{bronze_table}")
-                .withColumn("sequence_by", col(fileMetadata.file_modification_time))
+                spark.readStream.table(f"LIVE.{bronze_table}")
+                .withColumn("sequence_by", F.col("fileMetadata.file_modification_time"))
+                .withColumn("data", F.from_csv(F.col("value"), schema=ddl)).alias("data")
             )
+            return explode_and_split(sdf)
+
   
-    ### stream changes into target silver table
+    # ## stream changes into target silver table
     # def stream_silver(self, bronze_table: str, table_name: str, ddl: str, keys: list, sequence_by: str):
     #      dlt.create_streaming_table(
     #         name = table_name
