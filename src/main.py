@@ -267,7 +267,7 @@ class IngestionDLT:
 
   
     ## stream changes into target silver table
-    def create_silver_streaming_tables(self, bronze_table: str, table_name: str, sequence_by: str, keys: list, schema: str = None, except_column_list: list = None):
+    def stream_silver(self, bronze_table: str, table_name: str, sequence_by: str, keys: list, schema: str = None):
         # create the target table
         dlt.create_streaming_table(
             name = table_name
@@ -294,7 +294,7 @@ class IngestionDLT:
             ,apply_as_deletes = None
             ,apply_as_truncates = None
             ,column_list = None
-            ,except_column_list = None
+            ,except_column_list = ["fullFilePath", "datasource", "inputFileName", "ingestTime", "ingestDate", "value", "sequence_by", "file_path", "file_name", "file_size", "file_block_start", "file_block_length", "file_modification_time"]
             ,stored_as_scd_type = "1"
             ,track_history_column_list = None
             ,track_history_except_column_list = None

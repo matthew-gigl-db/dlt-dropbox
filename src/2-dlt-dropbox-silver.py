@@ -10,6 +10,13 @@ import main
 
 # COMMAND ----------
 
+key_path = spark.conf.get('bundle.fixturePath') + "/ddl"
+sys.path.append(os.path.abspath(key_path))
+
+import keys
+
+# COMMAND ----------
+
 Pipeline = main.IngestionDLT(
     spark = spark
     ,volume = spark.conf.get("workflow_inputs.volume_path")
@@ -39,29 +46,14 @@ for i in ddl_ref:
 
 # COMMAND ----------
 
-# Pipeline.stage_silver(
-#   bronze_table = f"{catalog}.{schema}.allergies_csv_bronze"
-#   ,table_name = "allergies"
-#   ,ddl = 'struct<start:date,stop:date,patient_id:string,encounter_id:string,code:string,system:string,description:string,type:string,category:string,reaction1:string,description1:string,severity1:string,reaction2:string,description2:string,severity2:string>'
-# )
-
-# COMMAND ----------
-
-Pipeline.create_silver_streaming_tables(
+Pipeline.stream_silver(
   bronze_table = f"{catalog}.{schema}.allergies_csv_bronze"
   ,table_name = "allergies"
   ,sequence_by = "sequence_by"
-  ,keys = ["patient_id", "encounter_id", "code"]
+  ,keys = allergies_keys
   ,schema = None
-  ,except_column_list = None
 )
 
 # COMMAND ----------
 
-# Pipeline.apply_changes_to_silver(
-#   table_name = "allergies"
-#   ,sequence_by = "sequence_by"
-#   ,keys = ["patient_id", "encounter_id", "code"]
-#   ,schema = None
-#   ,except_column_list = None
-# )
+
