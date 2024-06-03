@@ -267,7 +267,7 @@ class IngestionDLT:
 
   
     ## stream changes into target silver table
-    def create_silver_streaming_tables(self, bronze_table: str, table_name: str, sequence_by: str, keys: list, schema: str = None, except_column_list: list = None):
+    def create_silver_streaming_tables(self, bronze_table: str, table_name: str):
         # create the target table
          dlt.create_streaming_table(
             name = table_name
