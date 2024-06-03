@@ -44,3 +44,14 @@ for i in ddl_ref:
 #   ,table_name = "allergies"
 #   ,ddl = 'struct<start:date,stop:date,patient_id:string,encounter_id:string,code:string,system:string,description:string,type:string,category:string,reaction1:string,description1:string,severity1:string,reaction2:string,description2:string,severity2:string>'
 # )
+
+# COMMAND ----------
+
+Pipeline.stream_silver(
+  bronze_table = f"{catalog}.{schema}.allergies_csv_bronze"
+  ,table_name = "allergies"
+  ,sequence_by = "sequence_by"
+  ,keys = ["patient_id", "encounter_id", "code"]
+  ,schema = None
+  ,except_column_list = None
+)
