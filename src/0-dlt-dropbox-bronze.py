@@ -95,7 +95,7 @@ Pipeline.ingest_raw_to_bronze(
     ,table_comment="A full text record of every file that has landed in our raw synthea landing folder."
     ,table_properties={"quality":"bronze", "phi":"True", "pii":"True", "pci":"False"}
     ,source_folder_path_from_volume="output/csv"
-    ,options = {"skipRows" : 1}
+    ,options = 1
 )
 
 # COMMAND ----------
