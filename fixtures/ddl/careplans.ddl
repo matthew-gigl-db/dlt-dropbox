@@ -1,0 +1,1 @@
+struct<careplan_id:string,start:date,stop:date,patient_id:string,encounter_id:string,code:int,description:string,reason_code:bigint,reason_description:string>
