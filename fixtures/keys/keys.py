@@ -15,3 +15,4 @@ payer_transitions = ["patient_id", "member_id", "payer_id", "secondary_payer_id"
 payers = ["payer_id"]
 procedures = ["patient_id", "encounter_id", "code"]
 providers = ["provider_id"]
+supplies = ["patient_id", "encounter_id", "code"]
