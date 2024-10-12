@@ -8,26 +8,28 @@ resources:
         workflow_inputs.databricks_pat_key: ${var.databricks_pat_key}
         workflow_inputs.secret_scope: ${var.secrets_scope}
         workflow_inputs.volume_path: ${var.raw_file_path}
-        bundle.sourcePath: /Workspace${workspace.file_path}/src
-        bundle.fixturePath: /Workspace${workspace.file_path}/fixtures
+        # bundle.sourcePath: /Workspace${workspace.file_path}/src
+        # bundle.fixturePath: /Workspace${workspace.file_path}/fixtures
+        bundle.sourcePath: ${workspace.file_path}/src
+        bundle.fixturePath: ${workspace.file_path}/fixtures
       libraries:
         - notebook:
             path: ../src/0-dlt-dropbox-bronze.py
         - notebook:
             path: ../src/1-dlt-dropbox-load-schemas.py
       target: ${var.schema}
-      clusters:
-        - label: default
-          node_type_id: r5d.2xlarge
-          autoscale:
-            min_workers: 1
-            max_workers: 10
-            mode: ENHANCED
+      # clusters:
+      #   - label: default
+      #     node_type_id: r5d.2xlarge
+      #     autoscale:
+      #       min_workers: 1
+      #       max_workers: 10
+      #       mode: ENHANCED
       development: true
       photon: true
       channel: PREVIEW
       catalog: ${var.catalog}
-      # serverless: true
+      serverless: true
       # data_sampling: false
     dlt_dropbox_silver:
       name: synthea-dropbox-silver
@@ -38,23 +40,25 @@ resources:
         workflow_inputs.volume_path: ${var.raw_file_path}
         workflow_inputs.catalog: ${var.catalog}
         workflow_inputs.schema: ${var.schema}
-        bundle.sourcePath: /Workspace${workspace.file_path}/src
-        bundle.fixturePath: /Workspace${workspace.file_path}/fixtures
+        # bundle.sourcePath: /Workspace${workspace.file_path}/src
+        # bundle.fixturePath: /Workspace${workspace.file_path}/fixtures
+        bundle.sourcePath: ${workspace.file_path}/src
+        bundle.fixturePath: ${workspace.file_path}/fixtures
       libraries:
         - notebook:
             path: ../src/2-dlt-dropbox-silver.py
       target: ${var.schema}
-      clusters:
-        - label: default
-          node_type_id: r5d.2xlarge
-          autoscale:
-            min_workers: 1
-            max_workers: 10
-            mode: ENHANCED
+      # clusters:
+      #   - label: default
+      #     node_type_id: r5d.2xlarge
+      #     autoscale:
+      #       min_workers: 1
+      #       max_workers: 10
+      #       mode: ENHANCED
       development: true
       photon: true
       channel: PREVIEW
       catalog: ${var.catalog}
-      # serverless: true
+      serverless: true
       # data_sampling: false
 
