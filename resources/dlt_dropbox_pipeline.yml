@@ -18,13 +18,13 @@ resources:
         - notebook:
             path: ../src/1-dlt-dropbox-load-schemas.py
       target: ${var.schema}
-      clusters:
-        - label: default
-          node_type_id: r5d.2xlarge
-          autoscale:
-            min_workers: 1
-            max_workers: 10
-            mode: ENHANCED
+      # clusters:
+      #   - label: default
+      #     node_type_id: r5d.2xlarge
+      #     autoscale:
+      #       min_workers: 1
+      #       max_workers: 10
+      #       mode: ENHANCED
       development: true
       photon: true
       channel: PREVIEW
@@ -48,13 +48,13 @@ resources:
         - notebook:
             path: ../src/2-dlt-dropbox-silver.py
       target: ${var.schema}
-      clusters:
-        - label: default
-          node_type_id: r5d.2xlarge
-          autoscale:
-            min_workers: 1
-            max_workers: 10
-            mode: ENHANCED
+      # clusters:
+      #   - label: default
+      #     node_type_id: r5d.2xlarge
+      #     autoscale:
+      #       min_workers: 1
+      #       max_workers: 10
+      #       mode: ENHANCED
       development: true
       photon: true
       channel: PREVIEW
